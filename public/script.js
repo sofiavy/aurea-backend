@@ -6,7 +6,7 @@
 (function() {
   'use strict';
 
-  const API = 'http://localhost:3000/api';
+  const API = 'https://aurea-backend-production-d168.up.railway.app/api';
 
   // ── Sesión ────────────────────────────────────────────────────────────────
   const Session = {
