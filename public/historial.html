@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis compras — AUREA</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23080806'/><text y='72' x='50' text-anchor='middle' font-size='62' font-family='serif' fill='%23C9A84C'>A</text></svg>" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-l:#E8D49A;--black:#080806;--dark:#0E0E0C;--dark2:#161614;--dark3:#1E1E1B;--dark4:#272724;--gray:#888880;--gray2:#5A5A55;--light:#F2EDE4;--white:#FDFAF5;--green:#4A8C5C;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--light);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.2rem,4vw,3.5rem);background:rgba(8,8,6,.97);backdrop-filter:blur(18px);border-bottom:.5px solid rgba(201,168,76,.1);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;letter-spacing:.38em;color:var(--gold);text-decoration:none;}
+.nav-r{display:flex;align-items:center;gap:1rem;}
+.nav-link{text-decoration:none;color:var(--gray);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;transition:color .2s;}
+.nav-link:hover{color:var(--gold);}
+.logout-btn{background:transparent;border:.5px solid rgba(201,168,76,.2);color:var(--gray2);padding:.4rem .85rem;border-radius:2px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;}
+.logout-btn:hover{border-color:rgba(201,168,76,.5);color:var(--gold);}
+
+/* Main */
+main{max-width:860px;margin:0 auto;padding:3rem clamp(1.2rem,4vw,3.5rem);}
+.page-eyebrow{font-size:.63rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem;display:flex;align-items:center;gap:.7rem;}
+.page-eyebrow::before{content:'';width:1.5rem;height:.5px;background:var(--gold);}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.4rem);font-weight:300;color:var(--white);margin-bottom:.5rem;}
+.page-sub{font-size:.8rem;color:var(--gray2);margin-bottom:2.5rem;}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:2.5rem;}
+.stat-card{background:var(--dark2);border:.5px solid rgba(201,168,76,.1);border-radius:8px;padding:1.2rem 1.4rem;}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:var(--gold);}
+.stat-l{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gray2);margin-top:.2rem;}
+
+/* List */
+.purchases-list{display:flex;flex-direction:column;gap:1rem;}
+.purchase-card{background:var(--dark2);border:.5px solid rgba(201,168,76,.1);border-radius:8px;padding:1.4rem 1.6rem;transition:border-color .25s;}
+.purchase-card:hover{border-color:rgba(201,168,76,.25);}
+.pc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.9rem;gap:1rem;flex-wrap:wrap;}
+.pc-id{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gray2);}
+.pc-date{font-size:.72rem;color:var(--gray2);}
+.pc-status{font-size:.57rem;letter-spacing:.15em;text-transform:uppercase;padding:.22rem .6rem;border-radius:2px;flex-shrink:0;}
+.status-pendiente{background:rgba(201,168,76,.1);color:var(--gold);border:.5px solid rgba(201,168,76,.25);}
+.status-confirmado{background:rgba(74,140,92,.1);color:#6BBF87;border:.5px solid rgba(74,140,92,.3);}
+.status-enviado{background:rgba(43,93,160,.12);color:#7AAEE8;border:.5px solid rgba(43,93,160,.3);}
+.pc-product{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--white);margin-bottom:.25rem;}
+.pc-details{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.72rem;color:var(--gray2);}
+.pc-detail{display:flex;align-items:center;gap:.35rem;}
+.pc-detail::before{content:'·';color:var(--gold);font-size:.8rem;}
+.pc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:.9rem;border-top:.5px solid rgba(201,168,76,.07);}
+.pc-price{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);}
+.pc-qty{font-size:.72rem;color:var(--gray2);}
+
+/* Empty state */
+.empty-state{text-align:center;padding:4rem 2rem;background:var(--dark2);border:.5px solid rgba(201,168,76,.08);border-radius:10px;}
+.empty-icon{font-size:2.5rem;margin-bottom:1.2rem;opacity:.4;}
+.empty-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:var(--white);margin-bottom:.5rem;}
+.empty-sub{font-size:.8rem;color:var(--gray2);margin-bottom:1.8rem;}
+.btn-gold{background:var(--gold);color:var(--black);border:none;padding:.8rem 1.8rem;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .3s;text-decoration:none;display:inline-block;}
+.btn-gold:hover{background:var(--gold-l);}
+
+/* Loading */
+.loading{text-align:center;padding:3rem;color:var(--gray2);font-size:.82rem;}
+.loading::after{content:'';display:inline-block;width:18px;height:18px;border:1.5px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin-left:.7rem;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">AUREA</a>
+  <div class="nav-r">
+    <a href="/" class="nav-link">Tienda</a>
+    <span id="nav-user" style="font-size:.75rem;color:var(--gray2);"></span>
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+  </div>
+</nav>
+
+<main>
+  <div class="page-eyebrow">Mi cuenta</div>
+  <h1 class="page-title">Mis compras</h1>
+  <p class="page-sub" id="page-sub">Cargando historial…</p>
+
+  <div class="stats-row" id="stats-row" style="display:none;">
+    <div class="stat-card">
+      <div class="stat-n" id="stat-total">0</div>
+      <div class="stat-l">Pedidos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-n" id="stat-pulseras">0</div>
+      <div class="stat-l">Pulseras</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-n" id="stat-gasto">$0</div>
+      <div class="stat-l">Total gastado</div>
+    </div>
+  </div>
+
+  <div id="purchases-container">
+    <div class="loading">Cargando tus compras</div>
+  </div>
+</main>
+
+<script>
+const API = 'http://localhost:3000/api';
+
+function logout() {
+  localStorage.removeItem('aurea_token');
+  localStorage.removeItem('aurea_user');
+  window.location.href = '/login';
+}
+
+// Verificar sesión
+var token = localStorage.getItem('aurea_token');
+var user  = null;
+try { user = JSON.parse(localStorage.getItem('aurea_user')); } catch {}
+
+if (!token || !user) {
+  window.location.href = '/login?redirect=/historial';
+}
+
+// Mostrar nombre
+var navUser = document.getElementById('nav-user');
+if (navUser && user) navUser.textContent = user.name;
+
+async function loadPurchases() {
+  try {
+    var res  = await fetch(API + '/purchases', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+
+    if (res.status === 401) {
+      logout();
+      return;
+    }
+
+    var data = await res.json();
+    render(data.purchases || []);
+
+  } catch (err) {
+    document.getElementById('purchases-container').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">⚠</div>'
+      + '<div class="empty-title">Error de conexión</div>'
+      + '<p class="empty-sub">No se pudo conectar con el servidor.<br>Verifica que esté corriendo en localhost:3000</p>'
+      + '</div>';
+  }
+}
+
+function fmt(n) {
+  return '$' + Number(n).toLocaleString('es-CO');
+}
+
+function fmtDate(str) {
+  var d = new Date(str);
+  if (isNaN(d)) return str;
+  return d.toLocaleDateString('es-CO', { day:'2-digit', month:'long', year:'numeric' });
+}
+
+function render(purchases) {
+  var sub       = document.getElementById('page-sub');
+  var container = document.getElementById('purchases-container');
+  var statsRow  = document.getElementById('stats-row');
+
+  if (!purchases.length) {
+    sub.textContent = 'Aún no tienes compras registradas';
+    container.innerHTML =
+      '<div class="empty-state">'
+      + '<div class="empty-icon">◇</div>'
+      + '<div class="empty-title">Sin compras aún</div>'
+      + '<p class="empty-sub">Cuando confirmes una compra quedará guardada aquí con todos los detalles.</p>'
+      + '<a href="/" class="btn-gold">Ver colección</a>'
+      + '</div>';
+    return;
+  }
+
+  // Stats
+  var totalQty   = purchases.reduce(function(s,p){ return s + p.qty; }, 0);
+  var totalGasto = purchases.reduce(function(s,p){ return s + p.price * p.qty; }, 0);
+  document.getElementById('stat-total').textContent    = purchases.length;
+  document.getElementById('stat-pulseras').textContent = totalQty;
+  document.getElementById('stat-gasto').textContent    = fmt(totalGasto);
+  statsRow.style.display = '';
+  sub.textContent = purchases.length + ' pedido' + (purchases.length !== 1 ? 's' : '') + ' registrado' + (purchases.length !== 1 ? 's' : '');
+
+  container.innerHTML = '<div class="purchases-list">'
+    + purchases.map(function(p) {
+        var statusClass = 'status-' + (p.status || 'pendiente');
+        var statusLabels = { pendiente:'Pendiente', confirmado:'Confirmado', enviado:'Enviado' };
+        var engravingHtml = p.engraving
+          ? '<div class="pc-detail">Grabado: <em style="color:var(--gold-l);">' + p.engraving + '</em></div>'
+          : '';
+        return '<div class="purchase-card">'
+          + '<div class="pc-header">'
+          + '<div><div class="pc-id">Pedido #' + p.id + '</div><div class="pc-date">' + fmtDate(p.created_at) + '</div></div>'
+          + '<span class="pc-status ' + statusClass + '">' + (statusLabels[p.status] || p.status) + '</span>'
+          + '</div>'
+          + '<div class="pc-product">' + p.product_name + '</div>'
+          + '<div class="pc-details">'
+          + '<div class="pc-detail">Talla ' + p.size + '</div>'
+          + engravingHtml
+          + '</div>'
+          + '<div class="pc-footer">'
+          + '<div class="pc-price">' + fmt(p.price * p.qty) + '</div>'
+          + '<div class="pc-qty">Cantidad: ' + p.qty + ' · ' + fmt(p.price) + ' c/u</div>'
+          + '</div>'
+          + '</div>';
+      }).join('')
+    + '</div>';
+}
+
+loadPurchases();
+</script>
+</body>
+</html>
