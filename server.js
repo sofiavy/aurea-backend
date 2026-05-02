@@ -1,4 +1,5 @@
 // server.js — Servidor principal AUREA (compatible con Node 24+)
+require('dotenv').config(); // Carga variables del archivo .env
 const express   = require('express');
 const cors      = require('cors');
 const bcrypt    = require('bcryptjs');
@@ -125,6 +126,65 @@ app.post('/api/purchases', auth, (req, res) => {
 app.get('/api/purchases', auth, (req, res) => {
   const purchases = stmts.getPurchasesByUser(req.user.id);
   res.json({ purchases });
+});
+
+// ── PROXY → Google Translate (gratis, sin API key) ───────────────────────────
+// Recibe: { texts: string[], target: string }
+// Devuelve: { translations: string[] }
+app.post('/api/translate', async (req, res) => {
+  const { texts, target } = req.body;
+
+  if (!texts || !Array.isArray(texts) || !target)
+    return res.status(400).json({ error: 'Faltan parámetros: texts[] y target' });
+
+  try {
+    const results = [];
+
+    // Traducir de uno en uno usando el endpoint más confiable de Google
+    for (const text of texts) {
+      if (!text || text.trim().length === 0) {
+        results.push(text);
+        continue;
+      }
+
+      const url = 'https://translate.googleapis.com/translate_a/single'
+        + '?client=gtx'
+        + '&sl=es'
+        + '&tl=' + encodeURIComponent(target)
+        + '&dt=t'
+        + '&q=' + encodeURIComponent(text);
+
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        console.warn('Google Translate error para texto:', text.slice(0,30), '→', response.status);
+        results.push(text); // devolver original si falla
+        continue;
+      }
+
+      const data = await response.json();
+
+      // Respuesta: [[[traduccion, original, ...], ...], ...]
+      let translated = text;
+      if (Array.isArray(data) && Array.isArray(data[0])) {
+        translated = data[0]
+          .filter(item => Array.isArray(item) && item[0])
+          .map(item => item[0])
+          .join('');
+      }
+      results.push(translated || text);
+    }
+
+    res.json({ translations: results });
+  } catch (err) {
+    console.error('Error en Google Translate:', err.message);
+    res.status(502).json({ error: 'Error al traducir: ' + err.message });
+  }
 });
 
 // ── SPA fallback ──────────────────────────────────────────────────────────────
